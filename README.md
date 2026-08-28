@@ -39,8 +39,17 @@ It supports:
 The complete system runs locally without requiring a cloud AI API.
 
 ---
+---
 
 # 🖥️ Project Preview
+
+### 🔎 Vector Search
+
+Interactive vector search with selectable HNSW, KD-Tree and Brute Force algorithms, configurable distance metrics, Top-K retrieval and search latency measurement.
+
+![VectorDB Search Demo](screenshots/search-demo.png)
+
+---
 
 ### 🤖 Local RAG with Ollama
 
@@ -51,7 +60,6 @@ The interface demonstrates semantic retrieval and local LLM-based question answe
 > Question → Vector Retrieval → Relevant Context → llama3.2 → Generated Answer
 
 ---
-
 ## ✨ Features
 
 ### 🗄️ Vector Database
