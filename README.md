@@ -608,8 +608,9 @@ Software Engineering
 This project is intended for educational and personal use.
 
 <div align="center">
-Built with C++17 • Ollama • Vector Search • RAG
 
-Chitranshu Kumar
+### ⚡ Built with C++17 • Vector Search • Ollama • RAG
 
-</div> `
+<sub>© 2026 Chitranshu Kumar</sub>
+
+</div>
