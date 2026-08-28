@@ -1,734 +1,615 @@
-\# VectorDB RAG Engine
+# ⚡ VectorDB RAG Engine
 
+<div align="center">
 
+### A C++17 Vector Database + Semantic Search + Local RAG System
 
-A C++17-based vector database and Retrieval-Augmented Generation (RAG) system that combines custom vector search algorithms with local AI models through Ollama.
+**Built with Brute Force, KD-Tree, HNSW, Ollama Embeddings and Llama 3.2**
 
+![C++](https://img.shields.io/badge/C%2B%2B-17-blue?style=for-the-badge&logo=cplusplus)
+![Ollama](https://img.shields.io/badge/Ollama-Local_AI-black?style=for-the-badge)
+![RAG](https://img.shields.io/badge/RAG-Retrieval--Augmented_Generation-purple?style=for-the-badge)
+![HNSW](https://img.shields.io/badge/Search-HNSW-orange?style=for-the-badge)
+![Vector DB](https://img.shields.io/badge/Database-VectorDB-green?style=for-the-badge)
 
+</div>
 
-The project supports Brute Force, KD-Tree, and HNSW vector search, document chunking, semantic retrieval, and local LLM-based answer generation.
+---
 
+## 📌 Overview
 
+**VectorDB RAG Engine** is a C++17-based vector database and Retrieval-Augmented Generation (RAG) system.
 
-\## Features
+The project combines a custom vector search engine with locally running AI models through **Ollama**.
 
+It supports:
 
+- Vector storage
+- Brute Force nearest-neighbor search
+- KD-Tree search
+- HNSW approximate nearest-neighbor search
+- Euclidean, Cosine, and Manhattan distance metrics
+- Document chunking
+- Semantic search
+- Local text embeddings
+- Retrieval-Augmented Generation
+- REST APIs
+- Browser-based frontend
 
-\- Custom Vector Database implemented in C++
+The complete system runs locally without requiring a cloud AI API.
 
-\- Brute Force nearest-neighbor search
+---
 
-\- KD-Tree vector search
+## ✨ Features
 
-\- HNSW approximate nearest-neighbor search
+### 🗄️ Vector Database
 
-\- Euclidean, Cosine, and Manhattan distance metrics
+- Custom vector storage implemented in C++
+- Dynamic document insertion
+- Document deletion
+- Document listing
+- Vector metadata management
 
-\- Document chunking
+### 🔎 Vector Search
 
-\- Semantic document search
+Three search approaches are implemented:
 
-\- Local text embeddings using `nomic-embed-text`
+- **Brute Force**
+- **KD-Tree**
+- **HNSW**
 
-\- Local LLM generation using `llama3.2`
+Supported distance metrics:
 
-\- Retrieval-Augmented Generation (RAG)
+- Euclidean
+- Cosine
+- Manhattan
 
-\- REST API using `cpp-httplib`
+### 📚 Document RAG
 
-\- Browser-based frontend
+- Text document ingestion
+- Automatic text chunking
+- Embedding generation
+- Semantic retrieval
+- Top-K relevant chunk retrieval
+- Context-aware LLM generation
 
-\- Document insertion and deletion
+### 🤖 Local AI
 
-\- Local execution without cloud AI APIs
+Powered by Ollama:
 
+| Model | Purpose |
+|---|---|
+| `nomic-embed-text` | Text embeddings |
+| `llama3.2` | Answer generation |
 
+The current embedding pipeline produces **768-dimensional vectors**.
 
-\## Architecture
+### 🌐 Web Interface
 
+The project includes a browser-based frontend that communicates with the C++ backend through REST APIs.
 
+---
+
+# 🧠 System Architecture
 
 ```text
+                         ┌─────────────────────┐
+                         │       Browser       │
+                         │     index.html      │
+                         └──────────┬──────────┘
+                                    │
+                                    │ HTTP
+                                    ▼
+                         ┌─────────────────────┐
+                         │    C++ HTTP Server  │
+                         │     cpp-httplib     │
+                         └──────────┬──────────┘
+                                    │
+                 ┌──────────────────┼──────────────────┐
+                 │                  │                  │
+                 ▼                  ▼                  ▼
+          ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+          │ Vector      │    │ Document    │    │   Status /  │
+          │ Search      │    │ RAG         │    │   Stats     │
+          └──────┬──────┘    └──────┬──────┘    └─────────────┘
+                 │                  │
+       ┌─────────┼─────────┐        │
+       │         │         │        ▼
+       ▼         ▼         ▼   ┌───────────────┐
+   Brute Force KD-Tree    HNSW │ Text Chunking │
+                               └───────┬───────┘
+                                       │
+                                       ▼
+                              ┌──────────────────┐
+                              │     Ollama       │
+                              │ nomic-embed-text │
+                              └────────┬─────────┘
+                                       │
+                                       ▼
+                              ┌──────────────────┐
+                              │  Vector Embedding│
+                              │    768-D Vector  │
+                              └────────┬─────────┘
+                                       │
+                                       ▼
+                              ┌──────────────────┐
+                              │ Semantic Search  │
+                              └────────┬─────────┘
+                                       │
+                                       ▼
+                              ┌──────────────────┐
+                              │ Relevant Context │
+                              └────────┬─────────┘
+                                       │
+                                       ▼
+                              ┌──────────────────┐
+                              │     llama3.2     │
+                              └────────┬─────────┘
+                                       │
+                                       ▼
+                              ┌──────────────────┐
+                              │   Final Answer   │
+                              └──────────────────┘
+🔄 RAG Pipeline
+
+The document question-answering process follows this pipeline:
+
+                  DOCUMENT
+                      │
+                      ▼
+               Text Chunking
+                      │
+                      ▼
+             nomic-embed-text
+                      │
+                      ▼
+              768-D Embedding
+                      │
+                      ▼
+                DocumentDB
+                      │
+                      ▼
+              Vector Retrieval
+                      │
+                      ▼
+                Top-K Chunks
+                      │
+                      ▼
+              Prompt Construction
+                      │
+                      ▼
+                  llama3.2
+                      │
+                      ▼
+               Generated Answer
+Example
+
+User asks:
+
+What is a binary tree?
+
+The system:
+
+Converts the question into an embedding.
+Searches the stored document vectors.
+Retrieves the most semantically relevant chunks.
+Builds a prompt containing the retrieved information.
+Sends the prompt to llama3.2.
+Returns the generated answer.
+🔍 Vector Search Algorithms
+1. Brute Force
 
-&#x20;                   Browser
+Brute Force compares the query vector against stored vectors directly.
 
-&#x20;                      |
+Query Vector
+     │
+     ├──── Compare → Vector 1
+     ├──── Compare → Vector 2
+     ├──── Compare → Vector 3
+     ├──── Compare → Vector 4
+     ├──── ...
+     └──── Compare → Vector N
 
-&#x20;                      v
+It provides a straightforward exact-search baseline.
 
-&#x20;               +--------------+
+2. KD-Tree
 
-&#x20;               |  index.html  |
+KD-Tree organizes multidimensional data using a tree-based spatial partitioning structure.
 
-&#x20;               +------+-------+
+It can reduce the amount of the search space that needs to be examined compared with a direct exhaustive scan in suitable workloads.
 
-&#x20;                      |
+3. HNSW
 
-&#x20;                    HTTP
+HNSW (Hierarchical Navigable Small World) is a graph-based approximate nearest-neighbor search technique.
 
-&#x20;                      |
+The implementation creates a navigable graph structure that allows the search to move through candidate vectors rather than exhaustively comparing every stored vector.
 
-&#x20;                      v
+For the document-search pipeline, the implementation switches between Brute Force and HNSW based on the configured document-count threshold.
 
-&#x20;               +--------------+
+📐 Distance Metrics
 
-&#x20;               | C++ Backend  |
+The VectorDB supports three distance metrics:
 
-&#x20;               |  REST Server |
+Metric	Purpose
+Euclidean	Geometric distance between vectors
+Cosine	Measures directional similarity
+Manhattan	Sum of absolute coordinate differences
 
-&#x20;               +------+-------+
+The document semantic-search pipeline uses Cosine distance.
 
-&#x20;                      |
+For cosine distance:
 
-&#x20;         +------------+-------------+
+Lower distance indicates greater similarity.
 
-&#x20;         |                          |
+🤖 Ollama Integration
 
-&#x20;         v                          v
-
-&#x20;   Vector Database              RAG Pipeline
-
-&#x20;         |                          |
-
-&#x20;   +-----+-----+                    |
-
-&#x20;   |     |     |                    |
-
-&#x20;   v     v     v                    v
-
-&#x20; Brute  KD    HNSW             Text Chunking
-
-&#x20; Force  Tree                       |
-
-&#x20;                                   v
-
-&#x20;                           Ollama Embeddings
-
-&#x20;                          nomic-embed-text
-
-&#x20;                                   |
-
-&#x20;                                   v
-
-&#x20;                             Vector Search
-
-&#x20;                                   |
-
-&#x20;                                   v
-
-&#x20;                            Relevant Chunks
-
-&#x20;                                   |
-
-&#x20;                                   v
-
-&#x20;                               llama3.2
-
-&#x20;                                   |
-
-&#x20;                                   v
-
-&#x20;                             Final Answer
-
-
-
-RAG Pipeline
-
-
-
-The document question-answering pipeline works as follows:
-
-
-
-Document
-
-&#x20;  |
-
-&#x20;  v
-
-Text Chunking
-
-&#x20;  |
-
-&#x20;  v
-
-nomic-embed-text
-
-&#x20;  |
-
-&#x20;  v
-
-768-Dimensional Embedding
-
-&#x20;  |
-
-&#x20;  v
-
-DocumentDB
-
-&#x20;  |
-
-&#x20;  v
-
-Vector Search
-
-&#x20;  |
-
-&#x20;  v
-
-Top-K Relevant Chunks
-
-&#x20;  |
-
-&#x20;  v
-
-Prompt Construction
-
-&#x20;  |
-
-&#x20;  v
-
-llama3.2
-
-&#x20;  |
-
-&#x20;  v
-
-Generated Answer
-
-
-
-Vector Search Algorithms
-
-Brute Force
-
-
-
-Brute Force compares the query vector directly against stored vectors.
-
-
-
-Query
-
-&#x20; |
-
-&#x20; +--> Vector 1
-
-&#x20; +--> Vector 2
-
-&#x20; +--> Vector 3
-
-&#x20; +--> ...
-
-&#x20; +--> Vector N
-
-
-
-It provides a simple exact-search baseline.
-
-
-
-KD-Tree
-
-
-
-KD-Tree organizes vectors using a tree-based spatial partitioning approach.
-
-
-
-It demonstrates a traditional indexing approach for multidimensional data.
-
-
-
-HNSW
-
-
-
-HNSW (Hierarchical Navigable Small World) uses a graph-based structure for approximate nearest-neighbor search.
-
-
-
-The document-search implementation switches to HNSW once the stored document collection reaches the configured threshold.
-
-
-
-Distance Metrics
-
-
-
-The VectorDB supports:
-
-
-
-Euclidean distance
-
-Cosine distance
-
-Manhattan distance
-
-
-
-Cosine distance is used by the document semantic-search pipeline.
-
-
-
-Ollama
-
-
-
-The project uses Ollama to run the AI models locally.
-
-
+The project uses Ollama to run AI models locally.
 
 Embedding Model
-
 nomic-embed-text
 
+Purpose:
 
-
-This model converts text into numerical vector embeddings.
-
-
-
-The current embedding output used by the project is 768-dimensional.
-
-
-
+Text
+  ↓
+nomic-embed-text
+  ↓
+768-dimensional vector
 Generation Model
-
 llama3.2
 
+Purpose:
 
+Retrieved Context + Question
+          ↓
+       llama3.2
+          ↓
+      Final Answer
 
-This model generates the final answer using the retrieved document context.
+This allows the complete RAG workflow to run locally.
 
+📡 REST API
 
+The backend exposes REST endpoints for document management, semantic search, RAG, and system information.
 
-REST API
-
-Insert Document
-
+📥 Insert Document
+Endpoint
 POST /doc/insert
-
-
-
-Example:
-
-
-
+Request
 {
-
-&#x20; "title": "Binary Tree",
-
-&#x20; "text": "A binary tree is a tree data structure..."
-
+  "title": "Binary Tree",
+  "text": "A binary tree is a tree data structure where each node has at most two children."
 }
-
-
-
-The server chunks the text, generates embeddings, and stores the chunks in the VectorDB.
-
-
-
-Semantic Search
-
-POST /doc/search
-
-
-
-Example:
-
-
-
-{
-
-&#x20; "question": "What is a binary tree?",
-
-&#x20; "k": 3
-
-}
-
-
-
-Returns the most relevant document chunks.
-
-
-
-RAG Question Answering
-
-POST /doc/ask
-
-
-
-Example:
-
-
-
-{
-
-&#x20; "question": "What is a binary tree?",
-
-&#x20; "k": 3
-
-}
-
-
-
-The endpoint performs:
-
-
-
-Question
-
-&#x20;  |
-
+Pipeline
+Text
+ ↓
+Chunking
+ ↓
 Embedding
+ ↓
+VectorDB
+🔎 Semantic Search
+Endpoint
+POST /doc/search
+Request
+{
+  "question": "What is a binary tree?",
+  "k": 3
+}
 
-&#x20;  |
+Returns the most relevant document chunks and their vector distances.
 
+🧠 RAG Question Answering
+Endpoint
+POST /doc/ask
+Request
+{
+  "question": "What is a binary tree?",
+  "k": 3
+}
+Pipeline
+Question
+   ↓
+Embedding
+   ↓
 Vector Search
-
-&#x20;  |
-
-Relevant Context
-
-&#x20;  |
-
+   ↓
+Top-K Context
+   ↓
+Prompt
+   ↓
 llama3.2
-
-&#x20;  |
-
+   ↓
 Answer
-
-List Documents
-
+📋 List Documents
+Endpoint
 GET /doc/list
-
-
 
 Returns stored document chunks and metadata.
 
-
-
-Delete Document
-
+🗑️ Delete Document
+Endpoint
 DELETE /doc/delete/:id
-
-
 
 Example:
 
-
-
 DELETE /doc/delete/1
-
-System Status
-
+❤️ System Status
+Endpoint
 GET /status
 
-
-
-Returns:
-
-
+Returns information such as:
 
 Ollama availability
-
 Embedding model
-
 Generation model
-
 Document count
-
 Embedding dimensions
 
-Statistics
+Example:
 
+{
+  "ollamaAvailable": true,
+  "embedModel": "nomic-embed-text",
+  "genModel": "llama3.2",
+  "docCount": 10,
+  "docDims": 768
+}
+📊 Statistics
+Endpoint
 GET /stats
 
+Returns information about:
 
-
-Returns VectorDB statistics and supported algorithms and metrics.
-
-
-
-Tech Stack
-
-Technology	Purpose
-
-C++17	VectorDB and backend
-
+Vector count
+Vector dimensions
+Search algorithms
+Distance metrics
+🛠️ Tech Stack
+Technology	Role
+C++17	Core VectorDB and backend
 cpp-httplib	HTTP server/client
-
 HNSW	Approximate nearest-neighbor search
-
-KD-Tree	Vector indexing
-
+KD-Tree	Spatial vector indexing
 Brute Force	Exact-search baseline
-
 Ollama	Local AI runtime
-
-nomic-embed-text	Text embeddings
-
-llama3.2	LLM generation
-
+nomic-embed-text	Text embedding generation
+llama3.2	LLM answer generation
 HTML	Frontend
-
 CSS	Frontend styling
-
 JavaScript	Frontend logic
-
-
-
-Project Structure
-
+📁 Project Structure
 VectorDB-RAG-Engine/
+│
+├── main.cpp          # C++ VectorDB + REST backend
+├── index.html        # Web interface
+├── httplib.h         # HTTP library
+├── README.md         # Project documentation
+└── .gitignore        # Git exclusions
 
-|
+Build artifacts and temporary files are intentionally excluded from the repository.
 
-├── main.cpp
+⚙️ Requirements
 
-├── httplib.h
-
-├── index.html
-
-├── README.md
-
-└── .gitignore
-
-
-
-Build files, temporary test files, and local IDE configuration are excluded through .gitignore.
-
-
-
-Requirements
+Before running the project, install:
 
 Windows
-
 C++17 compatible compiler
-
 MinGW / GCC
-
 Ollama
-
-Required Ollama models
-
-Setup
-
-1\. Clone the repository
-
-git clone https://github.com/YOUR\_USERNAME/VectorDB-RAG-Engine.git
-
+🚀 Installation & Setup
+1. Clone the repository
+git clone https://github.com/YOUR_USERNAME/VectorDB-RAG-Engine.git
 cd VectorDB-RAG-Engine
 
-2\. Install Ollama
+Replace YOUR_USERNAME with your GitHub username.
 
+2. Install Ollama
 
-
-Install Ollama and verify:
-
-
+Install Ollama on your system and verify:
 
 ollama --version
+3. Download AI Models
 
-3\. Download the models
+Download the embedding model:
 
 ollama pull nomic-embed-text
 
+Download the generation model:
+
 ollama pull llama3.2
-
-
 
 Verify:
 
-
-
 ollama list
 
-Build
+You should see both models.
 
+🔨 Build
 
+From the project directory:
 
-Compile the project using:
+g++ -std=c++17 main.cpp -o main.exe -lws2_32
+▶️ Run
 
-
-
-g++ -std=c++17 main.cpp -o main.exe -lws2\_32
-
-Run
-
-
-
-Start the server:
-
-
+Start the C++ server:
 
 ./main.exe
 
+Expected startup information:
 
-
-The application will be available at:
-
-
+=== VectorDB Engine ===
 
 http://localhost:8080
 
+Ollama: ONLINE
+embed model: nomic-embed-text
+gen model: llama3.2
 
+Open your browser:
+http://localhost:8080
 
-Open that address in a browser.
-
-
-
-Testing
-
-Check system status
-
+🧪 Testing
+Check Ollama / Server Status
 Invoke-RestMethod -Uri "http://localhost:8080/status"
-
-Insert a document
-
+Insert a Document
 Invoke-RestMethod -Uri "http://localhost:8080/doc/insert" `
-
-&#x20; -Method POST `
-
-&#x20; -ContentType "application/json" `
-
-&#x20; -Body '{"title":"Binary Tree","text":"A binary tree is a tree data structure where each node has at most two children."}'
-
-Search
-
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{"title":"Binary Tree","text":"A binary tree is a tree data structure where each node has at most two children."}'
+Search the Document
 Invoke-RestMethod -Uri "http://localhost:8080/doc/search" `
-
-&#x20; -Method POST `
-
-&#x20; -ContentType "application/json" `
-
-&#x20; -Body '{"question":"What is a binary tree?","k":3}'
-
-Ask a RAG question
-
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{"question":"What is a binary tree?","k":3}'
+Ask a RAG Question
 Invoke-RestMethod -Uri "http://localhost:8080/doc/ask" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{"question":"What is a binary tree?","k":3}'
+📊 Current Demonstrated Capabilities
 
-&#x20; -Method POST `
+The project has been tested with:
 
-&#x20; -ContentType "application/json" `
+✅ C++ VectorDB backend
+✅ REST API
+✅ Browser frontend
+✅ Document insertion
+✅ Text chunking
+✅ 768-dimensional embeddings
+✅ Ollama integration
+✅ Semantic document retrieval
+✅ Brute Force retrieval
+✅ HNSW retrieval path
+✅ Document deletion
+✅ RAG question answering
+✅ Local LLM generation
 
-&#x20; -Body '{"question":"What is a binary tree?","k":3}'
 
-Example
+💡 Why Build a Vector Database?
+Traditional keyword search primarily depends on matching words.
 
-User Question
+Vector search represents text as numerical vectors and retrieves information according to semantic similarity.
 
-&#x20;    |
+For example:
+Stored:
+"Stacks follow the Last-In-First-Out principle."
 
-&#x20;    v
+Query:
+"Which data structure uses LIFO?"
 
-"What is a binary tree?"
+Vector search can identify the semantic relationship
+between these two statements even when their wording differs.
 
-&#x20;    |
+This project demonstrates the core infrastructure behind semantic retrieval systems and RAG applications.
 
-&#x20;    v
+🔬 Performance Evaluation
 
-nomic-embed-text
+Performance benchmarking is planned as a future stage of the project.
 
-&#x20;    |
+Potential evaluations include:
 
-&#x20;    v
+Brute Force vs KD-Tree vs HNSW latency
+Search performance at larger vector counts
+Average query latency
+Recall@K
+Index construction time
+Memory usage
 
-Query Embedding
+No benchmark numbers are claimed here until they are measured under controlled conditions.
 
-&#x20;    |
+⚠️ Current Limitations
 
-&#x20;    v
+This project is currently designed primarily as a learning, experimentation, and portfolio project.
 
-Vector Search
+Current limitations include:
 
-&#x20;    |
-
-&#x20;    v
-
-Relevant Document Chunk
-
-&#x20;    |
-
-&#x20;    v
-
-llama3.2
-
-&#x20;    |
-
-&#x20;    v
-
-Generated Answer
-
-Current Limitations
-
-Vector data is currently stored in memory.
-
-Restarting the server clears the document database.
-
+Vector data is stored in memory.
+Restarting the server clears the current document database.
 Ollama must be installed and running locally.
-
-The current deployment is local rather than publicly hosted.
-
+AI models are downloaded separately through Ollama.
+The current system is not publicly deployed.
 Production-level authentication and security are not implemented.
+Large-scale performance benchmarking is still planned.
 
-Large-scale performance benchmarking is planned as a future improvement.
+🚧 Future Improvements
+ Persistent vector storage
+ Larger-scale benchmarking
+ Recall@K evaluation
+ Configurable HNSW parameters
+ Batch document ingestion
+ Improved chunking strategies
+ Concurrent query processing
+ Better JSON parsing and validation
+ Authentication and API security
+ Docker support
+ Public/cloud deployment
+ More extensive automated testing
 
-Future Improvements
+🎯 Learning Objectives
 
-Persistent vector storage
+This project was built to understand how modern semantic-search and RAG systems work internally.
 
-Larger-scale performance benchmarking
+Key concepts explored:
 
-Recall@K evaluation
+Vector representations
+Embeddings
+Nearest-neighbor search
+Spatial indexing
+Graph-based indexing
+HNSW
+KD-Trees
+Cosine similarity
+Text chunking
+Semantic retrieval
+REST API design
+Local LLM integration
+RAG architecture
 
-Configurable HNSW parameters
-
-Batch document ingestion
-
-Improved text chunking
-
-Concurrent query processing
-
-API authentication and security
-
-Docker support
-
-Cloud deployment
-
-Author
-
+👨‍💻 Author
 Chitranshu Kumar
-
-
-
-Computer Science Engineering
-
-
+CSE(AIML)
 
 Interests:
-
-
-
 C++
-
-Data Structures and Algorithms
-
+Data Structures & Algorithms
 Artificial Intelligence
-
 Machine Learning
-
 Vector Databases
-
 Retrieval-Augmented Generation
+Backend Development
+Software Engineering
 
-Software Development
-
-License
-
-
+⭐ Project Summary
+                ┌───────────────────────┐
+                │       Documents       │
+                └───────────┬───────────┘
+                            ↓
+                     Text Chunking
+                            ↓
+                    Ollama Embeddings
+                            ↓
+                       VectorDB
+                            ↓
+             ┌──────────────┼──────────────┐
+             ↓              ↓              ↓
+         Brute Force     KD-Tree          HNSW
+             └──────────────┼──────────────┘
+                            ↓
+                     Semantic Search
+                            ↓
+                    Relevant Context
+                            ↓
+                         llama3.2
+                            ↓
+                      RAG Response
+📜 License
 
 This project is intended for educational and personal use.
 
+<div align="center">
+Built with C++17 • Ollama • Vector Search • RAG
+
+Chitranshu Kumar
+
+</div> `
