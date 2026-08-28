@@ -1,0 +1,7 @@
+main.exe
+main.o
+test.exe
+test.cpp
+compiler_error.txt
+.vscode/
+output/
