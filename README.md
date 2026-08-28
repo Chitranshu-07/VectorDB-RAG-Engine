@@ -40,6 +40,18 @@ The complete system runs locally without requiring a cloud AI API.
 
 ---
 
+# 🖥️ Project Preview
+
+### 🤖 Local RAG with Ollama
+
+The interface demonstrates semantic retrieval and local LLM-based question answering using `nomic-embed-text` and `llama3.2`.
+
+![VectorDB RAG Demo](screenshots/rag-demo.png)
+
+> Question → Vector Retrieval → Relevant Context → llama3.2 → Generated Answer
+
+---
+
 ## ✨ Features
 
 ### 🗄️ Vector Database
