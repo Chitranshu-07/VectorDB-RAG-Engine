@@ -607,10 +607,22 @@ Software Engineering
 
 This project is intended for educational and personal use.
 
+---
+
 <div align="center">
 
-### ⚡ Built with C++17 • Vector Search • Ollama • RAG
+## ⚡ VectorDB RAG Engine
 
-<sub>© 2026 Chitranshu Kumar</sub>
+**C++17 · Vector Search · HNSW · Ollama · RAG**
+
+<br>
+
+Built by **Chitranshu Kumar**
+
+<br>
+
+<sub>© 2026 Chitranshu Kumar · Educational & Portfolio Project</sub>
 
 </div>
+
+---
